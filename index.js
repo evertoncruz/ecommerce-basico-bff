@@ -1,22 +1,34 @@
 // ecommerce-basico/index.js
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@as-integrations/express');
 const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+const http = require('http');
+const cors = require('cors');
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 
 async function startApolloServer() {
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const app = express();
+  const httpServer = http.createServer(app);
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
+
   await server.start();
 
-  const app = express();
-  server.applyMiddleware({ app });
+  app.use(
+    '/graphql',
+    cors(),
+    express.json(),
+    expressMiddleware(server)
+  );
 
   const PORT = process.env.PORT || 4000;
   
-  app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-    console.log(`GraphQL endpoint: http://localhost:${PORT}${server.graphqlPath}`);
-  });
+  await new Promise(resolve => httpServer.listen({ port: PORT }, resolve));
+  console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
 }
 
 startApolloServer();
