@@ -1,6 +1,5 @@
 // ecommerce-basico/index.js
-const { ApolloServer } = require('@apollo/server');
-const { expressMiddleware } = require('@as-integrations/express');
+const { ApolloServer } = require('apollo-server-express');
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -17,13 +16,7 @@ async function startApolloServer() {
   });
 
   await server.start();
-
-  app.use(
-    '/graphql',
-    cors(),
-    express.json(),
-    expressMiddleware(server)
-  );
+  server.applyMiddleware({ app, path: '/graphql' });
 
   const PORT = process.env.PORT || 4000;
   

@@ -1,5 +1,5 @@
 // ecommerce-basico/schema.js
-const { gql } = require('@apollo/server');
+const { gql } = require('apollo-server-express');
 
 // O esquema define os tipos de dados e as queries disponíveis
 const typeDefs = gql`
