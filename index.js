@@ -13,6 +13,8 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    // Adiciona esta linha para desativar o cache de queries persistidas
+    persistedQueries: false,
   });
 
   await server.start();
